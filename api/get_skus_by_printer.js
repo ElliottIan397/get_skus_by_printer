@@ -20,7 +20,9 @@ export default async function handler(req, res) {
 
     const normalizedInput = printer_model.trim().toLowerCase();
 
-    const match = records.find(row => row.Printer_Name?.trim().toLowerCase() === normalizedInput);
+    const match = records.find(row =>
+      row.Printer_Name?.trim().toLowerCase() === normalizedInput
+    );
 
     if (!match) {
       return res.status(404).json({ error: 'Printer model not found', printer_model });
@@ -33,8 +35,8 @@ export default async function handler(req, res) {
       .filter(sku => sku.length > 0);
 
     return res.status(200).json({
-      printer_model: match.printer_model,
-      sku_list: cleaned
+      printer_model: match.Printer_Name,
+      sku_list: cleaned.join(', ')
     });
   } catch (err) {
     console.error('Failed to fetch or parse CSV:', err);
