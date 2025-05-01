@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import fetch from 'node-fetch';
 
-const CSV_URL = 'https://raw.githubusercontent.com/ElliottIan397/get_skus_by_printer/main/printers.csv';
+const CSV_URL = 'https://raw.githubusercontent.com/ElliottIan397/get_skus_by_printer/main/printers_table.csv';
 
 export default async function handler(req, res) {
   const { printer_model } = req.query;
