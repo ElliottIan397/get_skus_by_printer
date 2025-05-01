@@ -20,13 +20,13 @@ export default async function handler(req, res) {
 
     const normalizedInput = printer_model.trim().toLowerCase();
 
-    const match = records.find(row => row.printer_model?.trim().toLowerCase() === normalizedInput);
+    const match = records.find(row => row.Printer_Name?.trim().toLowerCase() === normalizedInput);
 
     if (!match) {
       return res.status(404).json({ error: 'Printer model not found', printer_model });
     }
 
-    let sku_list = match.sku_list || '';
+    let sku_list = match.Consumable_Sku || '';
     const cleaned = sku_list
       .split(',')
       .map(sku => sku.trim())
