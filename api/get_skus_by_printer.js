@@ -37,8 +37,8 @@ export default async function handler(req, res) {
       .filter(sku => sku.length > 0);
 
     return res.status(200).json({
-      printer_model: match.Printer_Name,
-      sku_list: cleaned.join(', ')
+       printer_model: match.Printer_Name,
+       resolved_sku_list: cleaned
     });
   } catch (err) {
     console.error('Failed to fetch or parse CSV:', err);
