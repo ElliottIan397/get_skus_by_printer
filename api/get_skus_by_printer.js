@@ -18,10 +18,12 @@ export default async function handler(req, res) {
       skip_empty_lines: true
     });
 
-    const normalizedInput = printer_model.trim().toLowerCase();
+    const normalize = str => str.replace(/["']/g, '').trim().toLowerCase();
+    const normalizedInput = normalize(printer_model);
+
 
     const match = records.find(row =>
-      row.Printer_Name?.trim().toLowerCase() === normalizedInput
+      normalize(row.Printer_Name || '') === normalizedInput
     );
 
     if (!match) {
