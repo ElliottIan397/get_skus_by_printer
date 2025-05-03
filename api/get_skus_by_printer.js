@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       printer_model: match.Printer_Name,
-      sku_list: cleaned  // 🔄 this is the only change
+      sku_list: cleaned // ✅ FIXED: field now named correctly
     });
   } catch (err) {
     console.error('Failed to fetch or parse CSV:', err);
