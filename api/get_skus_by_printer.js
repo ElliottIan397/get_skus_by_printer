@@ -30,26 +30,19 @@ export default async function handler(req, res) {
     }
 
     let sku_list = match.Consumable_Sku || '';
-    const cleanedSkuList = sku_list
+    const cleaned = sku_list
       .split(',')
       .map(sku => sku.trim())
       .filter(sku => sku.length > 0);
 
-    const safePrinterName = (match.Printer_Name || '').replace(/[^\x20-\x7E]/g, '').trim();
-
-    // ✅ DEBUG LOG
-    console.log('✅ RESPONSE READY:', {
-      printer_model: safePrinterName,
-      sku_list: cleanedSkuList
-    });
-
+    // ✅ Return sku_list as a JSON string
     return res.status(200).json({
-      printer_model: safePrinterName,
-      sku_list: cleanedSkuList
+      printer_model: match.Printer_Name,
+      sku_list: JSON.stringify(cleaned)
     });
 
   } catch (err) {
-    console.error('❌ Failed to fetch or parse CSV:', err);
+    console.error('Failed to fetch or parse CSV:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
