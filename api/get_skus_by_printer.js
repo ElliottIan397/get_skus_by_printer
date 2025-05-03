@@ -18,28 +18,25 @@ export default async function handler(req, res) {
       skip_empty_lines: true
     });
 
-    const normalize = str => str.replace(/["']/g, '').trim().toLowerCase();
-    const normalizedInput = normalize(printer_model);
-
-
-    const match = records.find(row =>
-      normalize(row.Printer_Name || '') === normalizedInput
-    );
+    const normalizedInput = printer_model.trim().toLowerCase();
+    const match = records.find(row => row.Printer_Name?.trim().toLowerCase() === normalizedInput);
 
     if (!match) {
       return res.status(404).json({ error: 'Printer model not found', printer_model });
     }
 
-    let sku_list = match.Consumable_Sku || '';
-    const cleaned = sku_list
+    const sku_list = (match.Consumable_Sku || '')
       .split(',')
       .map(sku => sku.trim())
       .filter(sku => sku.length > 0);
 
-    return res.status(200).json({
-       printer_model: match.Printer_Name,
-       resolved_sku_list: cleaned
+    // 🔍 Debug log
+    console.log('Printer Match:', {
+      printer_model: match.Printer_Name,
+      sku_list
     });
+
+    return res.status(200).json({ printer_model: match.Printer_Name, sku_list });
   } catch (err) {
     console.error('Failed to fetch or parse CSV:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
