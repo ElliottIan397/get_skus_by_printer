@@ -13,13 +13,17 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(CSV_URL);
     const csvText = await response.text();
+
     const records = parse(csvText, {
       columns: true,
       skip_empty_lines: true
     });
 
     const normalizedInput = printer_model.trim().toLowerCase();
-    const match = records.find(row => row.Printer_Name?.trim().toLowerCase() === normalizedInput);
+
+    const match = records.find(row =>
+      (row.Printer_Name || '').trim().toLowerCase() === normalizedInput
+    );
 
     if (!match) {
       return res.status(404).json({ error: 'Printer model not found', printer_model });
@@ -30,13 +34,20 @@ export default async function handler(req, res) {
       .map(sku => sku.trim())
       .filter(sku => sku.length > 0);
 
+    // ✅ Console debug log (safe for Vercel Runtime Logs)
+    console.log('Printer Match Debug Log:', {
+      requested: printer_model,
+      matched: match.Printer_Name,
+      sku_list
+    });
+
     return res.status(200).json({
       printer_model: match.Printer_Name,
       sku_list
     });
+
   } catch (err) {
-    console.error('Failed to fetch or parse CSV:', err);
+    console.error('CSV Fetch or Parse Error:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
