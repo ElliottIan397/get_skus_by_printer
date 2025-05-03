@@ -18,26 +18,38 @@ export default async function handler(req, res) {
       skip_empty_lines: true
     });
 
-    const normalized = printer_model.trim().toLowerCase();
+    const normalize = str => str.replace(/["']/g, '').trim().toLowerCase();
+    const normalizedInput = normalize(printer_model);
+
     const match = records.find(row =>
-      (row.Printer_Name || '').trim().toLowerCase() === normalized
+      normalize(row.Printer_Name || '') === normalizedInput
     );
 
     if (!match) {
       return res.status(404).json({ error: 'Printer model not found', printer_model });
     }
 
-    const cleanedSkuList = (match.Consumable_Sku || '')
+    let sku_list = match.Consumable_Sku || '';
+    const cleanedSkuList = sku_list
       .split(',')
       .map(sku => sku.trim())
-      .filter(sku => sku);
+      .filter(sku => sku.length > 0);
+
+    const safePrinterName = (match.Printer_Name || '').replace(/[^\x20-\x7E]/g, '').trim();
+
+    // ✅ DEBUG LOG
+    console.log('✅ RESPONSE READY:', {
+      printer_model: safePrinterName,
+      sku_list: cleanedSkuList
+    });
 
     return res.status(200).json({
-      printer_model: match.Printer_Name,
+      printer_model: safePrinterName,
       sku_list: cleanedSkuList
     });
 
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to fetch or parse CSV.' });
+    console.error('❌ Failed to fetch or parse CSV:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
