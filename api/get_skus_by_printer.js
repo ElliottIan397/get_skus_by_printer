@@ -30,15 +30,13 @@ export default async function handler(req, res) {
       .map(sku => sku.trim())
       .filter(sku => sku.length > 0);
 
-    // 🔍 Debug log
-    console.log('Printer Match:', {
+    return res.status(200).json({
       printer_model: match.Printer_Name,
       sku_list
     });
-
-    return res.status(200).json({ printer_model: match.Printer_Name, sku_list });
   } catch (err) {
     console.error('Failed to fetch or parse CSV:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
