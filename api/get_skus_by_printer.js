@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       skip_empty_lines: true
     });
 
-    const normalize = str => str.replace(/["']/g, '').trim().toLowerCase();
+    const normalize = str => str.replace(/["']/g, '').replaceAll('-','').replaceAll(' ','').trim().toLowerCase();
     const normalizedInput = normalize(printer_model);
 
     const match = records.find(row =>
